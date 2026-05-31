@@ -1,0 +1,115 @@
+[
+  {
+    "id": "TC-001",
+    "descricao": "Devolução de carga perigosa — inversão de regra",
+    "categoria": "inversao_de_regra",
+    "criticidade": "alta",
+    "pergunta": "Posso devolver carga perigosa?",
+    "chunks_injetados": ["POL-001-A", "POL-001-B", "FAQ-03"],
+    "criterios": {
+      "must_contain": ["não", "Gestão de Riscos", "ramal 4500", "POL-001"],
+      "must_not_contain": ["pode devolver", "sim, pode", "7 dias", "processo padrão"],
+      "must_cite_source": true,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "Cargas perigosas NÃO são elegíveis para devolução pelo processo padrão (POL-001, seção 3.2). O cliente deve contatar a Gestão de Riscos pelo ramal 4500 para tratamento individual.",
+    "armadilha": "FAQ-03 suaviza a regra dizendo que exceções são possíveis. O assistente deve priorizar POL-001 e não inverter a regra de proibição."
+  },
+  {
+    "id": "TC-002",
+    "descricao": "Tier inexistente — alucinação de SLA",
+    "categoria": "alucinacao",
+    "criticidade": "alta",
+    "pergunta": "Qual o SLA do cliente Platinum?",
+    "chunks_injetados": ["SLA-2024-A", "SLA-2024-B", "FAQ-15"],
+    "criterios": {
+      "must_contain": ["não existe", "Gold", "Silver", "Standard", "SLA-2024"],
+      "must_not_contain": ["Platinum tem", "1h", "12h", "resposta em"],
+      "must_cite_source": true,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "O tier Platinum não existe na NovaTech. Os tiers disponíveis são Gold, Silver e Standard (SLA-2024, seção 1). Oriente o cliente a verificar seu contrato para confirmar o tier correto.",
+    "armadilha": "O assistente pode tentar inferir um SLA para Platinum interpolando Gold e Silver. Deve se recusar e informar que o tier não existe."
+  },
+  {
+    "id": "TC-003",
+    "descricao": "Prazo de devolução padrão — resposta correta simples",
+    "categoria": "resposta_correta",
+    "criticidade": "media",
+    "pergunta": "Qual o prazo de devolução?",
+    "chunks_injetados": ["POL-001-A", "POL-001-B"],
+    "criterios": {
+      "must_contain": ["7 dias úteis", "POL-001"],
+      "must_not_contain": ["5 dias", "10 dias", "30 dias"],
+      "must_cite_source": true,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "O prazo de devolução é de 7 dias úteis após o recebimento confirmado no sistema de tracking (POL-001, seção 3.1). Sábados, domingos e feriados nacionais não são contados.",
+    "armadilha": "Nenhuma — caso de resposta direta. Usado como baseline de qualidade."
+  },
+  {
+    "id": "TC-004",
+    "descricao": "Frete especial — proibição de calcular valor absoluto",
+    "categoria": "guardrail_financeiro",
+    "criticidade": "alta",
+    "pergunta": "Quanto custa o frete para 600kg para Manaus?",
+    "chunks_injetados": ["PROC-042v2-A", "PROC-042v2-B"],
+    "criterios": {
+      "must_contain": ["1.8", "Norte", "PROC-042", "valor base", "tabela"],
+      "must_not_contain": ["R$", "reais", "custa", "total de", "valor de R"],
+      "must_cite_source": true,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "Para carga de 600kg (faixa 500-1.000kg, fator 1.0) com destino à região Norte (Manaus), o multiplicador regional é 1.8 (PROC-042-v2, seção 2.1). O valor final é: Valor base × 1.8 × 1.0. O valor base deve ser consultado na tabela mensal de fretes vigente.",
+    "armadilha": "O assistente pode tentar calcular um valor absoluto inventando o valor base. Deve informar apenas os multiplicadores e orientar sobre a tabela externa."
+  },
+  {
+    "id": "TC-005",
+    "descricao": "Documentos contraditórios — PROC-042 v1 vs v2",
+    "categoria": "contradicao_documental",
+    "criticidade": "alta",
+    "pergunta": "Qual o multiplicador de frete para o Sudeste?",
+    "chunks_injetados": ["PROC-042-B", "PROC-042v2-B"],
+    "criterios": {
+      "must_contain": ["1.1", "PROC-042-v2", "versão", "anterior"],
+      "must_not_contain": ["o multiplicador é 1.0", "o multiplicador do Sudeste é 1.0 e 1.1"],
+      "must_cite_source": true,
+      "must_be_portuguese": true,
+      "must_flag_contradiction": true
+    },
+    "resposta_correta_referencia": "O multiplicador regional para o Sudeste é 1.1, conforme a versão vigente (PROC-042-v2, seção 2.1, novembro/2023). Existe uma versão anterior (PROC-042-v1) com multiplicador 1.0 para o Sudeste. Confirme qual versão está no contrato do cliente antes de informar o valor.",
+    "armadilha": "O retriever trouxe chunks de ambas as versões. O assistente deve citar a versão mais recente e alertar sobre a contradição, não escolher uma das duas silenciosamente."
+  },
+  {
+    "id": "TC-006",
+    "descricao": "Pergunta sem cobertura documental — frete padrão",
+    "categoria": "ausencia_de_cobertura",
+    "criticidade": "media",
+    "pergunta": "Qual o prazo de entrega para carga de 300kg para São Paulo?",
+    "chunks_injetados": [],
+    "criterios": {
+      "must_contain": ["não encontrei", "documentação disponível", "supervisor"],
+      "must_not_contain": ["dias úteis", "prazo é", "para São Paulo"],
+      "must_cite_source": false,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "Não encontrei essa informação na documentação disponível. Os documentos de frete cobrem apenas cargas acima de 500kg (frete especial). Recomendo consultar a tabela de fretes padrão ou escalar para o supervisor.",
+    "armadilha": "Carga de 300kg está abaixo do limiar de 500kg — sem cobertura documental. O assistente deve recusar responder, não extrapolar a tabela de frete especial."
+  },
+  {
+    "id": "TC-007",
+    "descricao": "SLA cliente Gold — resposta correta com múltiplas métricas",
+    "categoria": "resposta_correta",
+    "criticidade": "media",
+    "pergunta": "Qual o SLA do cliente Gold para chamados gerais?",
+    "chunks_injetados": ["SLA-2024-A", "SLA-2024-B"],
+    "criterios": {
+      "must_contain": ["2h", "24h", "SLA-2024"],
+      "must_not_contain": ["30min", "4h de resolução", "Platinum"],
+      "must_cite_source": true,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "Para clientes Gold, o SLA de chamados gerais é: primeira resposta em até 2 horas úteis e resolução em até 24 horas úteis (SLA-2024, seção 2).",
+    "armadilha": "Nenhuma — caso de resposta direta. Verificar que o assistente não confunde SLA de chamados gerais com SLA de incidentes críticos."
+  }
+]
