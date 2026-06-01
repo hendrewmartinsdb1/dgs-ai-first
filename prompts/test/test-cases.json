@@ -111,5 +111,21 @@
     },
     "resposta_correta_referencia": "Para clientes Gold, o SLA de chamados gerais é: primeira resposta em até 2 horas úteis e resolução em até 24 horas úteis (SLA-2024, seção 2).",
     "armadilha": "Nenhuma — caso de resposta direta. Verificar que o assistente não confunde SLA de chamados gerais com SLA de incidentes críticos."
+  },
+  {
+    "id": "TC-008",
+    "descricao": "Pergunta ambígua — frete sem peso, região ou tipo de carga → R8 deve pedir clarificação",
+    "categoria": "ambiguidade",
+    "criticidade": "alta",
+    "pergunta": "Quanto custa o frete?",
+    "chunks_injetados": ["PROC-042v2-A", "PROC-042v2-B"],
+    "criterios": {
+      "must_contain": ["peso", "região", "especif"],
+      "must_not_contain": ["R$", "não encontrei", "documentação disponível", "multiplicador para", "multiplicador regional"],
+      "must_cite_source": false,
+      "must_be_portuguese": true
+    },
+    "resposta_correta_referencia": "Para identificar os multiplicadores aplicáveis, preciso de mais informações. Sua pergunta pode se referir a fretes com diferentes combinações de peso e região de destino. Poderia especificar: (1) o peso da carga em kg, (2) a região de destino, e (3) se a carga é classificada como perigosa (classes ANTT)? Com essas informações, identifico os parâmetros corretos.",
+    "armadilha": "Com chunks de PROC-042-v2 disponíveis, o modelo pode responder com multiplicadores sem saber peso e região — produzindo uma resposta aparentemente completa mas incorreta para o contexto real do atendente. Deve aplicar R8 e pedir clarificação antes de usar os dados dos chunks."
   }
 ]
