@@ -121,7 +121,7 @@
     "chunks_injetados": ["PROC-042v2-A", "PROC-042v2-B"],
     "criterios": {
       "must_contain": ["peso", "região", "especif"],
-      "must_not_contain": ["R$", "não encontrei", "documentação disponível", "multiplicador para", "multiplicador regional"],
+      "must_not_contain": ["R$", "não encontrei", "documentação disponível", "multiplicador para", "multiplicador regional", "multiplicador é", "é 1.", "é 1,"],
       "must_cite_source": false,
       "must_be_portuguese": true
     },
