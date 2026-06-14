@@ -1,3 +1,34 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "filesystem-rw": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./src", "./specs", "./skills"],
+      "_scope": "read-write — code, specs and skill definitions that agents actively generate and edit",
+      "_justification": "Agents (Claude Code, Copilot) must read and write source code in ./src, create specs in ./specs, and update skill files in ./skills. Write access is intentionally limited to these three directories."
+    },
+    "filesystem-ro": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./docs/novatech", "./data/retrieval-corpus"],
+      "_scope": "read-only intent — business documents and RAG corpus (enforcement via OS permissions, see docs/mcp-architecture.md)",
+      "_justification": "Business documents in ./docs/novatech and the RAG corpus in ./data/retrieval-corpus are source-of-truth artifacts. Agents must READ them for context but MUST NOT modify them. The filesystem MCP server has no native read-only flag — enforcement is via icacls on Windows (see docs/mcp-architecture.md § Read-Only Enforcement)."
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "."],
+      "_scope": "read — git history, diff, log, branch listing for the local repository",
+      "_justification": "Agents need to inspect commit history (git log), diffs (git diff), and branch state to understand recent changes and avoid conflicts. No push or force operations — git server exposes read operations only."
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "_scope": "read-write — persistent knowledge graph for decisions, ubiquitous language, and session context",
+      "_justification": "Stores ADR decisions, domain terminology (e.g. 'vigente', 'conflict_flag'), and cross-session context. Enables agents to remember project conventions without re-reading all documentation on every session."
+    },
+    "everything": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"],
+      "_scope": "dev-only — MCP primitives exploration (echo, sampling, resources)",
+      "_justification": "Used only during local development to test and explore MCP tool primitives. MUST NOT be enabled in CI or production agent configurations. Remove from mcp.json when not actively developing MCP integrations."
+    }
+  }
 }

@@ -1,0 +1,99 @@
+﻿═══════════════════════════════════════════════════════════════
+  NovaTech Assistant — MCP Health Check
+  Timestamp: 2026-06-13T17:21:16.822Z
+  Config:    C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant\.mcp\mcp.json
+  Repo:      C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant
+═══════════════════════════════════════════════════════════════
+
+  Servidores configurados: filesystem-rw, filesystem-ro, git, memory, everything
+
+📁 [filesystem-rw] Read-Write Server
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  Diretório './src' existe e é acessível
+  ✅ OK  Diretório './specs' existe e é acessível
+  ✅ OK  Diretório './skills' existe e é acessível
+
+📄 [filesystem-ro] Read-Only Intent Server (docs/negócio)
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  Diretório './docs/novatech' existe — 6 arquivo(s) .md encontrado(s)
+  ✅ OK  Diretório './data/retrieval-corpus' existe — 2 arquivo(s) .md encontrado(s)
+
+🌿 [git] Git Server
+  ✅ OK  Comando 'uvx' disponível no PATH
+  ✅ OK  Repositório git válido encontrado
+         HEAD: ref: refs/heads/master
+         Raiz: C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant
+
+🧠 [memory] Memory Server
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  @modelcontextprotocol/server-memory será instalado sob demanda via npx -y
+
+🔭 [everything] Everything Server (dev only)
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  @modelcontextprotocol/server-everything será instalado sob demanda via npx -y
+         Lembrete: remover do mcp.json quando não estiver desenvolvendo integrações MCP
+
+═══════════════════════════════════════════════════════════════
+  RESUMO
+═══════════════════════════════════════════════════════════════
+  ✅ OK  filesystem-rw
+  ✅ OK  filesystem-ro
+  ✅ OK  git
+  ✅ OK  memory
+  ✅ OK  everything
+───────────────────────────────────────────────────────────────
+  Todos os servidores operacionais. Sessão de desenvolvimento pronta.
+═══════════════════════════════════════════════════════════════
+
+
+===============================================================
+  SIMULAÇÃO DE FALHA — docs/novatech removido temporariamente
+===============================================================
+
+═══════════════════════════════════════════════════════════════
+  NovaTech Assistant — MCP Health Check
+  Timestamp: 2026-06-13T17:21:28.983Z
+  Config:    C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant\.mcp\mcp.json
+  Repo:      C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant
+═══════════════════════════════════════════════════════════════
+
+  Servidores configurados: filesystem-rw, filesystem-ro, git, memory, everything
+
+📁 [filesystem-rw] Read-Write Server
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  Diretório './src' existe e é acessível
+  ✅ OK  Diretório './specs' existe e é acessível
+  ✅ OK  Diretório './skills' existe e é acessível
+
+📄 [filesystem-ro] Read-Only Intent Server (docs/negócio)
+  ✅ OK  Comando 'npx' disponível no PATH
+  ❌ FALHA  Diretório './docs/novatech' NÃO encontrado
+         Path esperado: C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant\docs\novatech
+  ✅ OK  Diretório './data/retrieval-corpus' existe — 2 arquivo(s) .md encontrado(s)
+
+🌿 [git] Git Server
+  ✅ OK  Comando 'uvx' disponível no PATH
+  ✅ OK  Repositório git válido encontrado
+         HEAD: ref: refs/heads/master
+         Raiz: C:\Users\hendrew.martins\OneDrive - DB1 Group\Área de Trabalho\IA\DGS 1\Prática 2 - V2\Prática 2 - V2\Anexo-D-starter-repo-novatech-assistant\novatech-assistant
+
+🧠 [memory] Memory Server
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  @modelcontextprotocol/server-memory será instalado sob demanda via npx -y
+
+🔭 [everything] Everything Server (dev only)
+  ✅ OK  Comando 'npx' disponível no PATH
+  ✅ OK  @modelcontextprotocol/server-everything será instalado sob demanda via npx -y
+         Lembrete: remover do mcp.json quando não estiver desenvolvendo integrações MCP
+
+═══════════════════════════════════════════════════════════════
+  RESUMO
+═══════════════════════════════════════════════════════════════
+  ✅ OK  filesystem-rw
+  ❌ FALHA  filesystem-ro
+  ✅ OK  git
+  ✅ OK  memory
+  ✅ OK  everything
+───────────────────────────────────────────────────────────────
+  1 falha(s) crítica(s). Corrija antes de iniciar a sessão.
+═══════════════════════════════════════════════════════════════
