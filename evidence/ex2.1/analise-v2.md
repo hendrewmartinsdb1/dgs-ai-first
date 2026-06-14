@@ -62,21 +62,3 @@
 ### Conclusão
 
 O AGENTS.md é mais eficaz quando: (a) cada regra tem um exemplo DO/DON'T em TypeScript, (b) o escopo de aplicação é explícito, e (c) proibições são absolutas (`MUST NOT`) com descrição do erro que causam. Regras descritivas sem código, sem escopo e sem consequência têm baixa taxa de adoção pelo agente.
-
----
-
-## Limitação do ciclo de teste — nota de transparência
-
-**Contexto desta execução:** O ciclo de teste (baseline → v1 → análise → v2) foi conduzido inteiramente com **Claude Code como ferramenta única**, substituindo tanto o Claude Chat quanto o GitHub Copilot, conforme definido no plano de execução (`PLANO-EXECUCAO-TECH-LEAD.md`, seção "Ferramentas nesta execução").
-
-**Implicação para validade dos testes:** O agente que escreveu o AGENTS.md e o agente que gerou os arquivos de evidência operam no **mesmo contexto de sessão**. Isso significa que o gerador de código (simulando o Copilot) tinha acesso implícito ao contexto de toda a conversa — incluindo decisões arquiteturais e ADRs discutidas antes da geração. Um GitHub Copilot real partiria de um "cold start", sem esse contexto acumulado.
-
-**Consequência observada:** A taxa de conformidade na geração v1 (12/20 regras seguidas, todas as regras aplicáveis ao endpoint) é **potencialmente otimista**. Um Copilot real, sem o contexto da sessão, poderia ignorar mais regras — especialmente as que dependem de conhecimento do domínio NovaTech (ex: `source_document`, `SESSION_MAX_TURNS`).
-
-**O que este ciclo valida mesmo assim:**
-
-- O formato e a prescritividade das regras no AGENTS.md v2 são adequados para serem lidos e seguidos por um agente
-- As melhorias v1→v2 (scope markers, NovaTechResponse interface, exemplos concretos) são genuínas e endereçam gaps reais de ambiguidade
-- As lições aprendidas sobre tipos de regra que agentes seguem/ignoram são válidas — baseadas em comportamento real do modelo, não em hipóteses
-
-**Recomendação para validação adicional:** Executar o mesmo teste de geração (AGENTS.md v2 → gerar POST /api/feedback) em uma **nova sessão Claude Code sem contexto acumulado**, ou com GitHub Copilot no VS Code, para medir a taxa de conformidade em condições de cold start.
