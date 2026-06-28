@@ -21,6 +21,21 @@ O harness não é uma funcionalidade. É o sistema de contenção que envolve o 
 
 ---
 
+## Mapa de Status — Existe Hoje vs. Falta (referência rápida)
+
+> Leitura rápida por camada: o que já existe no repositório, o que ainda precisa ser implementado,
+> e qual arquivo é o ponto de entrada para fechar o gap.
+
+| Camada | Arquivo responsável | ✅ Existe hoje | ❌ Falta implementar |
+|--------|---------------------|---------------|----------------------|
+| **Tool Orchestration** | `src/services/search.ts` | Pipeline de ingestão (847 docs); filtro `status eq 'vigente'` (ADR-0003); query endpoint funcional | Guarda para retrieval vazio; retry no Azure AI Search; modo degradado documentado |
+| **Verification Loops** | `src/services/response-validator.ts` | `verifySourceDocument()` com normalização e suporte a array (implementado neste exercício) | Integração ao fluxo do query handler; guardrail regex de carga perigosa |
+| **Context & Memory** | `src/services/prompt-builder.ts` | Gerenciamento básico de sessão no bot do Teams | Budget enforçado (~4.300 tokens); `SESSION_MAX_TURNS=5`; sumarização estruturada; modo multi-domínio (7 chunks) |
+| **Guardrails** | `src/services/response-validator.ts` + `prompts/system-prompt.md` | Guardrails probabilísticos no system prompt | `AssistantResponseSchema` Zod `.strict()`; guardrail regex determinístico; endpoint `/api/review-queue` para fila de HITL |
+| **Observability** | `src/shared/logger.ts` | Logger pino configurado | Métricas estruturadas por evento; 4 alertas com thresholds; Application Insights ou equivalente |
+
+---
+
 ## Camada 1: Tool Orchestration
 
 **Definição:** Coordenação entre os componentes do pipeline — ingestão, retrieval, montagem de prompt e geração — de forma que falha em qualquer componente resulte em comportamento seguro, não em resposta inventada.
@@ -88,6 +103,38 @@ Fluxo de verificação (order matters):
 ```typescript
 const VALID_DOCUMENTS = ['POL-001', 'PROC-042', 'PROC-042-v2', 'SLA-2024', 'FAQ-Atendimento'] as const;
 ```
+
+### Conexão Código ↔ HITL: `isSuspect` como trigger de revisão humana
+
+> Este é o elo entre a Camada 2 (verificação determinística) e a Camada 4 (HITL).
+
+A função `verifySourceDocument()` retorna um campo `isSuspect: boolean`. Este campo **não é apenas uma flag de log** — é um **trigger de HITL**. O fluxo correto após a verificação é:
+
+```
+verifySourceDocument() retorna isSuspect: true
+        │
+        ▼
+  Resposta NÃO é entregue ao atendente
+        │
+        ▼
+  POST /api/review-queue
+  {
+    queryId, question, answer, sourceDocument,
+    confidenceScore, suspectReason, timestamp
+  }
+        │
+        ▼
+  Supervisor de turno recebe no painel web (src/web)
+  SLA: 15 minutos para revisar e liberar ou descartar
+        │
+        ├─ Supervisor libera → resposta chega ao atendente com flag "revisada"
+        └─ 15min sem ação   → fallback padrão ("consulte o supervisor, ramal 4500")
+```
+
+**Por que isso é um guardrail determinístico e não probabilístico:**
+o prompt pode pedir ao modelo "sempre cite fonte válida", mas o modelo pode errar (~10% dos casos).
+`isSuspect: true` é gerado por código — 100% das respostas com fonte ausente ou não reconhecida
+ativam o HITL, independentemente do que o modelo produziu.
 
 ---
 

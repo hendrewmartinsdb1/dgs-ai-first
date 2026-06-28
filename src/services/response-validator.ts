@@ -46,8 +46,21 @@ const VALID_DOCUMENTS = new Set([
 ]);
 
 export interface VerificationResult {
+  /** Todos os documentos citados existem na lista de documentos válidos da NovaTech. */
   isValid: boolean;
+  /**
+   * TRIGGER DE HITL — quando true, esta resposta NÃO deve ser entregue ao atendente.
+   *
+   * O caller deve rotear a resposta para a fila de revisão humana:
+   *   POST /api/review-queue { queryId, question, answer, sourceDocument, reason }
+   *
+   * Fluxo: supervisor revisa no painel web (src/web) em até 15min.
+   * Fallback se SLA expirar: SAFE_DEFAULT_RESPONSE ("consulte o supervisor").
+   *
+   * Ver harness-design.md → Camada 2: Verification Loops → "Conexão Código ↔ HITL".
+   */
   isSuspect: boolean;
+  /** Motivo legível para log e exibição na fila de revisão. */
   reason: string;
 }
 
